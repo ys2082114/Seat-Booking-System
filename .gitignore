@@ -1,0 +1,15 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Environment — NEVER commit .env
+.env
+# .env.example is safe to commit (no real secrets)
+
+# Build output
+dist/
+build/
+
+# Misc
+.DS_Store
+*.local
