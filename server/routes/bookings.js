@@ -57,6 +57,19 @@ router.post('/', auth, async (req, res) => {
             return res.status(404).json({ message: 'Seat not found.' });
         }
 
+        // Block booking on inactive (maintenance) seats
+        if (!seat.isActive) {
+            return res.status(400).json({ message: 'This seat is currently unavailable (under maintenance).' });
+        }
+
+        // Feature 2: One seat per day per user
+        const existingUserBooking = await Booking.findOne({ userId: req.user.id, date });
+        if (existingUserBooking) {
+            return res.status(400).json({
+                message: 'You already have a booking on this date. Only one seat per day is allowed.',
+            });
+        }
+
         // Run policy engine
         const { allowed, reason } = await checkBookingPolicy({
             batch: req.user.batch,

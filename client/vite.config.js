@@ -11,6 +11,7 @@ export default defineConfig({
             '/bookings': 'http://localhost:5000',
             '/holidays': 'http://localhost:5000',
             '/my-bookings': 'http://localhost:5000',
+            '/admin': 'http://localhost:5000',
         },
     },
 })

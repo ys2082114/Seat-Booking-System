@@ -66,6 +66,11 @@ export default function SeatGrid({ seats, bookings, weekDates, user, onBook, onR
         const dow = dateObj.getUTCDay() // 0=Sun…6=Sat
         const booking = bookingMap[`${strId(seat._id)}_${dateStr}`]
 
+        // Seat disabled by admin (maintenance)
+        if (seat.isActive === false) {
+            return { cls: 'seat-blocked', label: '🔧', tooltip: 'Seat unavailable (maintenance)', clickable: false }
+        }
+
         // Already booked by this user
         if (booking && strId(booking.userId?._id || booking.userId) === myId) {
             return {

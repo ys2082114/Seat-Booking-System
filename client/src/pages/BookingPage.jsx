@@ -5,6 +5,7 @@ import MyBookings from '../components/MyBookings'
 import OccupancyBar from '../components/OccupancyBar'
 import QuickBookModal from '../components/QuickBookModal'
 import HolidayManager from '../components/HolidayManager'
+import AdminPanel from '../components/AdminPanel'
 import api from '../services/api'
 
 /** Get ISO week number */
@@ -205,6 +206,11 @@ export default function BookingPage() {
                     <HolidayManager />
                 </div>
 
+                {/* Admin Panel — visible only to ADMIN users */}
+                {user.role === 'ADMIN' && (
+                    <AdminPanel onRefreshSeats={fetchData} />
+                )}
+
                 {/* 3 PM notice */}
                 {!canBook && (
                     <div className="cutoff-notice">
@@ -230,7 +236,7 @@ export default function BookingPage() {
                     <div className="legend-item"><div className="legend-dot dot-floater" /><span>Floater (Available)</span></div>
                     <div className="legend-item"><div className="legend-dot dot-mine" /><span>Your Booking</span></div>
                     <div className="legend-item"><div className="legend-dot dot-taken" /><span>Taken</span></div>
-                    <div className="legend-item"><div className="legend-dot dot-blocked" /><span>Blocked</span></div>
+                    <div className="legend-item"><div className="legend-dot dot-blocked" /><span>Blocked / Maintenance</span></div>
                 </div>
 
                 {/* Seat Grid */}

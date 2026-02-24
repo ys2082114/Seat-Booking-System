@@ -120,6 +120,7 @@ async function checkBookingPolicy({ batch, seatType, dateStr, now }) {
     // 5. Seat eligibility
     if (seatType === 'designated') {
         if (!isDesignatedDay) {
+            // Inactive batch: designated seats not available on non-designated days
             const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const allowedNames = designatedDays.map((d) => dayNames[d]).join(', ');
             return {
@@ -127,13 +128,20 @@ async function checkBookingPolicy({ batch, seatType, dateStr, now }) {
                 reason: `Designated seats for Batch ${batch} are only available on ${allowedNames} in ${weekType}.`,
             };
         }
-    } else if (seatType === 'floater') {
+        // Active batch + designated seat on a designated day → explicitly allowed
+        return { allowed: true, reason: 'OK' };
+    }
+
+    if (seatType === 'floater') {
         if (isDesignatedDay) {
+            // Floater seats are NOT available on designated days
             return {
                 allowed: false,
                 reason: `Floater seats are only available on your non-designated days.`,
             };
         }
+        // Non-designated day → floater seat explicitly allowed
+        return { allowed: true, reason: 'OK' };
     }
 
     return { allowed: true, reason: 'OK' };

@@ -24,6 +24,7 @@ async function seed() {
 
     // Create sample users
     const users = [
+        { name: 'Admin User', email: 'admin@example.com', password: 'admin123', batch: 'A', role: 'ADMIN' },
         { name: 'Alice (Batch A)', email: 'alice@example.com', password: 'password123', batch: 'A' },
         { name: 'Bob (Batch B)', email: 'bob@example.com', password: 'password123', batch: 'B' },
         { name: 'Carol (Batch A)', email: 'carol@example.com', password: 'password123', batch: 'A' },
@@ -32,7 +33,7 @@ async function seed() {
         const user = new User(u);
         await user.save(); // triggers bcrypt pre-save hook
     }
-    console.log('👤 Created 3 sample users (alice, bob, carol) — password: password123');
+    console.log('👤 Created 4 sample users (admin, alice, bob, carol)');
 
     // Sample holidays  
     const holidays = [
@@ -46,9 +47,10 @@ async function seed() {
     console.log('🎉 Created sample holidays');
 
     console.log('\n✅ Seed complete! Sample credentials:');
-    console.log('   alice@example.com / password123 (Batch A)');
-    console.log('   bob@example.com   / password123 (Batch B)');
-    console.log('   carol@example.com / password123 (Batch A)');
+    console.log('   admin@example.com / admin123    (ADMIN, Batch A)');
+    console.log('   alice@example.com / password123 (USER,  Batch A)');
+    console.log('   bob@example.com   / password123 (USER,  Batch B)');
+    console.log('   carol@example.com / password123 (USER,  Batch A)');
 
     await mongoose.disconnect();
     process.exit(0);

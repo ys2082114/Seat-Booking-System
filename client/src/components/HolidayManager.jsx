@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import api from '../services/api'
 
 export default function HolidayManager() {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
+    const isAdmin = currentUser.role === 'ADMIN'
     const [holidays, setHolidays] = useState([])
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState({ date: '', reason: '' })
@@ -56,25 +58,27 @@ export default function HolidayManager() {
 
             {open && (
                 <div className="mybookings-panel">
-                    {/* Add form */}
-                    <form className="holiday-form" onSubmit={handleAdd}>
-                        <input
-                            type="date"
-                            className="holiday-input"
-                            value={form.date}
-                            onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-                        />
-                        <input
-                            type="text"
-                            className="holiday-input"
-                            placeholder="Reason (e.g. Diwali)"
-                            value={form.reason}
-                            onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))}
-                        />
-                        <button className="btn-add-holiday" type="submit" disabled={loading}>
-                            {loading ? 'Adding…' : '+ Add'}
-                        </button>
-                    </form>
+                    {/* Add form — ADMIN only */}
+                    {isAdmin && (
+                        <form className="holiday-form" onSubmit={handleAdd}>
+                            <input
+                                type="date"
+                                className="holiday-input"
+                                value={form.date}
+                                onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+                            />
+                            <input
+                                type="text"
+                                className="holiday-input"
+                                placeholder="Reason (e.g. Diwali)"
+                                value={form.reason}
+                                onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))}
+                            />
+                            <button className="btn-add-holiday" type="submit" disabled={loading}>
+                                {loading ? 'Adding…' : '+ Add'}
+                            </button>
+                        </form>
+                    )}
                     {err && <p className="qb-err">{err}</p>}
                     {msg && <p className="qb-success">{msg}</p>}
 
@@ -84,18 +88,25 @@ export default function HolidayManager() {
                     ) : (
                         <table className="mb-table" style={{ marginTop: '0.75rem' }}>
                             <thead>
-                                <tr><th>Date</th><th>Reason</th><th></th></tr>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Reason</th>
+                                    {isAdmin && <th></th>}
+                                </tr>
                             </thead>
                             <tbody>
                                 {holidays.map((h) => (
                                     <tr key={h._id}>
                                         <td>{h.date}</td>
                                         <td>{h.reason}</td>
-                                        <td>
-                                            <button className="btn-release-sm" onClick={() => handleDelete(h._id, h.date)}>
-                                                Remove
-                                            </button>
-                                        </td>
+                                        {/* Remove button — ADMIN only */}
+                                        {isAdmin && (
+                                            <td>
+                                                <button className="btn-release-sm" onClick={() => handleDelete(h._id, h.date)}>
+                                                    Remove
+                                                </button>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>

@@ -5,7 +5,7 @@ const User = require('../models/User');
 
 function signToken(user) {
     return jwt.sign(
-        { id: user._id, name: user.name, email: user.email, batch: user.batch },
+        { id: user._id, name: user.name, email: user.email, batch: user.batch, role: user.role },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
     );
@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
         const user = new User({ name, email, password, batch });
         await user.save();
         const token = signToken(user);
-        res.status(201).json({ token, user: { id: user._id, name, email, batch } });
+        res.status(201).json({ token, user: { id: user._id, name, email, batch, role: user.role } });
     } catch (err) {
         res.status(500).json({ message: 'Server error.', error: err.message });
     }
@@ -50,7 +50,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials.' });
         }
         const token = signToken(user);
-        res.json({ token, user: { id: user._id, name: user.name, email: user.email, batch: user.batch } });
+        res.json({ token, user: { id: user._id, name: user.name, email: user.email, batch: user.batch, role: user.role } });
     } catch (err) {
         res.status(500).json({ message: 'Server error.', error: err.message });
     }

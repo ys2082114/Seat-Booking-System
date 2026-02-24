@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Holiday = require('../models/Holiday');
 const auth = require('../middleware/authMiddleware');
+const adminMiddleware = require('../middleware/adminMiddleware');
 
 // GET /holidays — list all holidays
 router.get('/', auth, async (req, res) => {
@@ -13,8 +14,8 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-// POST /holidays — add a holiday
-router.post('/', auth, async (req, res) => {
+// POST /holidays — add a holiday (ADMIN only)
+router.post('/', auth, adminMiddleware, async (req, res) => {
     try {
         const { date, reason } = req.body;
         if (!date || !reason) {
@@ -32,8 +33,8 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
-// DELETE /holidays/:id — remove a holiday
-router.delete('/:id', auth, async (req, res) => {
+// DELETE /holidays/:id — remove a holiday (ADMIN only)
+router.delete('/:id', auth, adminMiddleware, async (req, res) => {
     try {
         const holiday = await Holiday.findByIdAndDelete(req.params.id);
         if (!holiday) {
